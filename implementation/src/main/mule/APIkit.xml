@@ -134,19 +134,15 @@ output application/json
         </ee:transform>
     </flow>
     <flow name="delete:\heroes\(id):kchalasiewicz-heroes-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <ee:transform doc:name="Transform Message">
+        <flow-ref doc:name="DeleteHero" doc:id="bb0d46cf-3bb0-4c69-b3a2-94af95d70df4" name="DeleteHeroSubflow"/>
+        <ee:transform doc:name="Prepare response">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
   message: "Hero was deleted :("
-} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+}]]></ee:set-payload>
             </ee:message>
         </ee:transform>
     </flow>
