@@ -186,14 +186,15 @@ output application/json
         </ee:transform>
     </flow>
     <flow name="post:\heroes:application\json:kchalasiewicz-heroes-config">
-        <ee:transform doc:name="Transform Message">
+        <flow-ref doc:name="AddHero" doc:id="262813a3-1812-49d9-93b1-8f4df2a71ea0" name="AddHeroSubflow"/>
+		<ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
   message: "Hero was created!"
-} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+}]]></ee:set-payload>
             </ee:message>
         </ee:transform>
     </flow>

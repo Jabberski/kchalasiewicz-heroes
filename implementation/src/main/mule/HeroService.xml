@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
 	<sub-flow name="ReadHeroesSubflow" doc:id="f9007c56-7a39-498e-81fc-63c5b4fd5904" >
 		<choice doc:name="Choice" doc:id="d19161c7-8114-4cb6-8de9-39ee9be5790a" >
 			<when expression="#[attributes.queryParams.name != null]">
@@ -19,5 +20,20 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 			</otherwise>
 			
 		</choice>
+	</sub-flow>
+	<sub-flow name="AddHeroSubflow" doc:id="5f48f71e-2627-45ef-b5db-e529adeb3918" >
+		<flow-ref doc:name="HeroValidation" doc:id="aa094908-671d-43b7-9f28-16a9c0fa47ef" name="HeroValidationSubflow"/>
+		<db:insert doc:name="Add hero" doc:id="5c798f9c-e67b-47e6-a203-132bc961139f" config-ref="Database_Config">
+			<db:sql><![CDATA[INSERT INTO heroes(name, superpowers) VALUES (:name, :superpowers)]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	'name': payload.name,
+	'superpowers': payload.superpowers
+}]]]></db:input-parameters>
+		</db:insert>
+		<logger level="INFO" doc:name="Logger" doc:id="2ad3fe7b-a0ed-4030-9fd2-5744722e67be" message="Successfully added new hero to database" />
+	</sub-flow>
+	<sub-flow name="HeroValidationSubflow" doc:id="4f37d684-c6d5-421f-b4fa-0264acdd23e0" >
+		<validation:is-not-null doc:name="Name" doc:id="0499dbea-cde5-4501-b113-7d6a7bd84657" value="#[payload.name]"/>
+		<validation:is-not-null doc:name="Superpowers" doc:id="89405f4d-a3d8-4d3f-8ebb-3b97df412d10" value="#[payload.superpowers]"/>
 	</sub-flow>
 </mule>
