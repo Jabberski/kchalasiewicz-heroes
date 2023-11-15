@@ -83,8 +83,12 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 		</choice>
 	</sub-flow>
 	<sub-flow name="HeroValidationSubflow" doc:id="4f37d684-c6d5-421f-b4fa-0264acdd23e0" >
-		<validation:is-not-null doc:name="Name" doc:id="0499dbea-cde5-4501-b113-7d6a7bd84657" value="#[payload.name]"/>
-		<validation:is-not-null doc:name="Superpowers" doc:id="89405f4d-a3d8-4d3f-8ebb-3b97df412d10" value="#[payload.superpowers]"/>
+		<validation:is-not-blank-string doc:name="Name" doc:id="28a5a66a-d089-46c8-b047-619d460153af" value="#[payload.name]">
+			<error-mapping targetType="APP:WRONG_FORMAT" />
+		</validation:is-not-blank-string>
+		<validation:is-not-blank-string doc:name="Superpowers" doc:id="ca9dd7e3-3ab2-4cc7-8326-7e557aefe499" value="#[payload.superpowers]">
+			<error-mapping targetType="APP:WRONG_FORMAT" />
+		</validation:is-not-blank-string>
 	</sub-flow>
 	<sub-flow name="CheckIfHeroExistsFlow" doc:id="cb2b586c-6967-49b6-8315-6c426e74cf4b" >
 		<db:select doc:name="Hero by id" doc:id="33910ca3-d636-4931-8423-256a3a73306f" config-ref="Database_Config" >
