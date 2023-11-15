@@ -156,7 +156,7 @@ output application/json
     </flow>
     <flow name="get:\heroes:kchalasiewicz-heroes-config">
         <flow-ref doc:name="ReadHeroes" doc:id="f2865d6f-7aff-4e59-bdd8-07f244aacf0a" name="ReadHeroesSubflow"/>
-		<ee:transform doc:name="Transform Message" doc:id="5a6e9d74-e0a0-4085-a318-caf0891b0f15" >
+		<ee:transform doc:name="Prepare response" doc:id="5a6e9d74-e0a0-4085-a318-caf0891b0f15" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -167,27 +167,20 @@ payload]]></ee:set-payload>
 		<logger level="INFO" doc:name="Logger" doc:id="6fc73db5-90fd-41e3-a4dd-23f8358f5bcc" message="Successfully read the list of heroes"/>
     </flow>
     <flow name="get:\heroes\(id):kchalasiewicz-heroes-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <ee:transform doc:name="Transform Message">
+        <flow-ref doc:name="ReadHeroById" doc:id="23940f5c-346b-4997-a8f5-11f487316df1" name="ReadHeroByIdSubflow"/>
+		<ee:transform doc:name="Prepare response">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{
-  id: 1,
-  name: "Batman",
-  superpowers: "Money"
-} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+payload]]></ee:set-payload>
             </ee:message>
         </ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="50ad1681-fd93-41c4-ba8a-d24ed01143b0" message="Successfully read hero by id"/>
     </flow>
     <flow name="post:\heroes:application\json:kchalasiewicz-heroes-config">
         <flow-ref doc:name="AddHero" doc:id="262813a3-1812-49d9-93b1-8f4df2a71ea0" name="AddHeroSubflow"/>
-		<ee:transform doc:name="Transform Message">
+		<ee:transform doc:name="Prepare response">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json

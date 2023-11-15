@@ -32,6 +32,14 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 		</db:insert>
 		<logger level="INFO" doc:name="Logger" doc:id="2ad3fe7b-a0ed-4030-9fd2-5744722e67be" message="Successfully added new hero to database" />
 	</sub-flow>
+	<sub-flow name="ReadHeroByIdSubflow" doc:id="e62ef82b-eb24-4b61-9d1a-e3c11c06916d" >
+		<db:select doc:name="Hero by id" doc:id="1edf39d5-7bd6-40fe-b028-8113c0fb2f33" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM heroes WHERE id=:id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	'id': attributes.uriParams.id
+}]]]></db:input-parameters>
+		</db:select>
+	</sub-flow>
 	<sub-flow name="HeroValidationSubflow" doc:id="4f37d684-c6d5-421f-b4fa-0264acdd23e0" >
 		<validation:is-not-null doc:name="Name" doc:id="0499dbea-cde5-4501-b113-7d6a7bd84657" value="#[payload.name]"/>
 		<validation:is-not-null doc:name="Superpowers" doc:id="89405f4d-a3d8-4d3f-8ebb-3b97df412d10" value="#[payload.superpowers]"/>
