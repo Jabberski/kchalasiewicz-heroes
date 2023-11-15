@@ -40,6 +40,18 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 }]]]></db:input-parameters>
 		</db:select>
 	</sub-flow>
+	<sub-flow name="UpdateHeroSubflow" doc:id="d076f235-9455-44ee-a11b-9f18c34b9897" >
+		<flow-ref doc:name="HeroValidation" doc:id="d96f5224-60e3-455e-b591-6a88b1f060b2" name="HeroValidationSubflow"/>
+		<db:update doc:name="Hero by id" doc:id="3ad537dc-d0aa-4ca8-9dd5-8886386354b7" config-ref="Database_Config">
+			<db:sql ><![CDATA[UPDATE heroes SET name=:name, superpowers=:superpowers WHERE id=:id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	'id': attributes.uriParams.id,
+	'name': payload.name,
+	'superpowers': payload.superpowers
+}]]]></db:input-parameters>
+		</db:update>
+		<logger level="INFO" doc:name="Logger" doc:id="678d284e-9f83-48dd-8bf0-531b3d1a3530" message="Successfully updated hero in database"/>
+	</sub-flow>
 	<sub-flow name="HeroValidationSubflow" doc:id="4f37d684-c6d5-421f-b4fa-0264acdd23e0" >
 		<validation:is-not-null doc:name="Name" doc:id="0499dbea-cde5-4501-b113-7d6a7bd84657" value="#[payload.name]"/>
 		<validation:is-not-null doc:name="Superpowers" doc:id="89405f4d-a3d8-4d3f-8ebb-3b97df412d10" value="#[payload.superpowers]"/>

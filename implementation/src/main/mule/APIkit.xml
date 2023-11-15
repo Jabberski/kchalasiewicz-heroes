@@ -121,19 +121,15 @@ output application/json
         </error-handler>
     </flow>
     <flow name="put:\heroes\(id):application\json:kchalasiewicz-heroes-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <ee:transform doc:name="Transform Message">
+        <flow-ref doc:name="UpdateHero" doc:id="228035db-8048-4ae6-8a52-9d182aef573e" name="UpdateHeroSubflow"/>
+        <ee:transform doc:name="Prepare response">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
   message: "Hero was updated!"
-} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+} ]]></ee:set-payload>
             </ee:message>
         </ee:transform>
     </flow>
