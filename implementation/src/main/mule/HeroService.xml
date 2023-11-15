@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<sub-flow name="ReadHeroesSubflow" doc:id="f9007c56-7a39-498e-81fc-63c5b4fd5904" >
+		<choice doc:name="Choice" doc:id="d19161c7-8114-4cb6-8de9-39ee9be5790a" >
+			<when expression="#[attributes.queryParams.name != null]">
+				<db:select doc:name="Hero with specific name" doc:id="6cb69d95-b3ff-4d9f-9cb2-1793c0542f16" config-ref="Database_Config">
+					<db:sql><![CDATA[SELECT * FROM heroes WHERE name= :name]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{'name': attributes.queryParams.name}]]]></db:input-parameters>
+				</db:select>
+			</when>
+			<otherwise >
+				<db:select doc:name="All heroes" doc:id="7cbc26e3-b6f5-426a-8295-b810f920eea1" config-ref="Database_Config">
+			<db:sql><![CDATA[SELECT * FROM heroes]]></db:sql>
+		</db:select>
+			</otherwise>
+			
+		</choice>
+	</sub-flow>
+</mule>
