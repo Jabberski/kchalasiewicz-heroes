@@ -38,7 +38,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 					<munit-tools:with-attribute whereValue="Database_Config" attributeName="config-ref" />
 				</munit-tools:with-attributes>
 				<munit-tools:then-return >
-					<munit-tools:payload value="#[readUrl('classpath://mocks/Hero by name.json')]" />
+					<munit-tools:payload value="#[readUrl('classpath://mocks/Hero.json')]" />
 				</munit-tools:then-return>
 			</munit-tools:mock-when>
 		</munit:behavior>
@@ -52,7 +52,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 			<flow-ref doc:name="GetHeroes" doc:id="3bcadea0-0a58-48dd-bbf1-b136d1337fd4" name="get:\heroes:kchalasiewicz-heroes-config"/>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-equals doc:name="Check response" doc:id="f7ab2068-772f-4760-a63f-ad5c33f13c33" actual="#[payload]" expected="#[readUrl('classpath://mocks/Hero by name.json')]"/>
+			<munit-tools:assert-equals doc:name="Check response" doc:id="f7ab2068-772f-4760-a63f-ad5c33f13c33" actual="#[payload]" expected="#[readUrl('classpath://mocks/Hero.json')]"/>
 		</munit:validation>
 	</munit:test>
 	<munit:test name="GetHeroWithMissingNameTest" doc:id="3e64fb50-0126-42ac-a75e-5f365450134f" expectedErrorType="APP:MISSING_HERO_NAME">
@@ -111,6 +111,52 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 		</munit:execution>
 		<munit:validation >
 			<munit-tools:assert-equals doc:name="Check error message" doc:id="9b4634d0-aa6d-4cd8-b347-c250dfc45d2a" actual="#[payload]" expected='#[{message: "Incorrect Hero format"}]'/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="GetHeroByIdTest" doc:id="8ad7ed09-a234-4750-b4af-9afb948129d4" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Select from DB" doc:id="4d341882-2929-4dfd-9246-18e40a3fb123" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Hero by id" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="64a0a21a-2289-4c49-9d2d-6c75a4f7117c" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Database_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[readUrl('classpath://mocks/Hero.json')]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="uriParam id" doc:id="ae6f75b8-2b7b-48ee-9b09-631aefb8d2db" >
+				<munit:attributes value="#[{&#10;	uriParams: {id:1} &#10;}]" />
+			</munit:set-event>
+			<flow-ref doc:name="GetHeroById" doc:id="b4976e8f-4096-42b0-9bb5-76b0517c3a4c" name="get:\heroes\(id):kchalasiewicz-heroes-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Check response" doc:id="0d762148-1fd9-48ce-903f-2473df2131ce" actual="#[payload]" expected="#[readUrl('classpath://mocks/Hero.json')]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="GetHeroByMissingIdTest" doc:id="5958fc14-6fd9-4695-8581-bc5c08646a81" expectedErrorType="APP:MISSING_HERO">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Select from DB" doc:id="b78f4088-6592-416b-aced-836289d3a653" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Hero by id" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="64a0a21a-2289-4c49-9d2d-6c75a4f7117c" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Database_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[[]]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="uriParam id" doc:id="907e94c4-3997-49f9-a85a-241a99dd5987" >
+				<munit:attributes value="#[{&#10;	uriParams: {id:1} &#10;}]" />
+			</munit:set-event>
+			<flow-ref doc:name="GetHeroById" doc:id="f5fa1ef6-6a60-4a60-8407-c07f3a758e43" name="get:\heroes\(id):kchalasiewicz-heroes-config" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Check error message" doc:id="32516318-2342-4644-b156-08d02845919b" actual="#[payload]" expected="#[{&#10;	message: &quot;Can't find a Hero with this id&quot;&#10;}]"/>
 		</munit:validation>
 	</munit:test>
 
