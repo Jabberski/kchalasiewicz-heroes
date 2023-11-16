@@ -1,0 +1,22 @@
+[
+	{
+        "superpowers": "Superstrength and flying",
+        "name": "Superman",
+        "id": 1
+    },
+    {
+        "superpowers": "Money",
+        "name": "Batman",
+        "id": 2
+    },
+    {
+        "superpowers": "WorldWideWeb",
+        "name": "Spiderman",
+        "id": 3
+    },
+    {
+        "superpowers": "Swimming",
+        "name": "Aquaman",
+        "id": 4
+    }
+]

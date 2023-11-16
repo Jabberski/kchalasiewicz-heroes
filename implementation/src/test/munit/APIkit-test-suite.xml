@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="APIkit-test-suite.xml" />
+	<munit:test name="GetAllHeroesTest" doc:id="87d666d8-f496-43b0-99a9-8b08731303c7" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Select from DB" doc:id="29248db5-24f2-4b44-a5ba-e4a0129e8006" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="All heroes" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="7cbc26e3-b6f5-426a-8295-b810f920eea1" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Database_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[readUrl('classpath://mocks/All heroes.json')]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="GetHeroes" doc:id="1d071734-84cc-4141-ab0b-47feaa0fc65b" name="get:\heroes:kchalasiewicz-heroes-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Check payload" doc:id="65f76d63-0092-46e9-a010-fd886f636329" actual="#[payload]" expected="#[readUrl('classpath://mocks/All heroes.json')]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="GetHeroWithNameTest" doc:id="201d83d3-129f-472a-96c5-7866edbd0d9e" >
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Select from DB" doc:id="b8f533f8-c7fa-47fe-8b77-9105b7f51609" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Hero with specific name" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="6cb69d95-b3ff-4d9f-9cb2-1793c0542f16" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Database_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[readUrl('classpath://mocks/Hero by name.json')]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="queryParam name" doc:id="e4931221-e19c-4889-8b03-34d38fcde599" >
+				<munit:attributes value='#[{&#10;	queryParams: {name: "Batman"}&#10;}]' />
+				<munit:inbound-properties>
+            		<munit:inbound-property key="http.uri.params" value="#[['name': 'Anu']]"/>
+        		</munit:inbound-properties>
+			</munit:set-event>
+			<flow-ref doc:name="GetHeroes" doc:id="3bcadea0-0a58-48dd-bbf1-b136d1337fd4" name="get:\heroes:kchalasiewicz-heroes-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Check payload" doc:id="f7ab2068-772f-4760-a63f-ad5c33f13c33" actual="#[payload]" expected="#[readUrl('classpath://mocks/Hero by name.json')]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="GetHeroWithMissingNameTest" doc:id="3e64fb50-0126-42ac-a75e-5f365450134f" expectedErrorType="APP:MISSING_HERO_NAME">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="44e12c1d-8013-4bfd-9a0c-47195063a45e" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Hero with specific name" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="6cb69d95-b3ff-4d9f-9cb2-1793c0542f16" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Database_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[[]]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="queryParam name" doc:id="939653ff-300a-4328-9d10-d8ccceea84ba" >
+				<munit:attributes value='#[{&#10;	queryParams: {name: "Hulk"}&#10;}]' />
+			</munit:set-event>
+			<flow-ref doc:name="GetHeroes" doc:id="932628a2-c03a-47ce-81d8-68d30528c2ff" name="get:\heroes:kchalasiewicz-heroes-config"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-equals doc:name="Check error message" doc:id="94eec4cf-00f9-4c78-b29f-19eb5b138bd1" actual="#[payload]" expected="#[{&#10;	message: &quot;Can't find a Hero with this name&quot;&#10;}]"/>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
