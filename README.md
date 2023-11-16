@@ -11,12 +11,12 @@ Link to **application deployed to cloudhub:** https://kchalasiewicz-hero-6kfo7.5
 | Free         | 70ec753cd1a44582a23855505be9b5cd | 0A73c5981c7a4CC698Ff018F06Fc7520 |  
 | Paid         | 8c72865d76764bac9f6f7a3fa3e188ba | 2694d64f6d7D4f6cBaC2AC98fD4A887B |  
 ## Example request body for POST and PUT <br>
-'''
+
 {  
     "name": "Flash",  
     "superpowers": "I am speed"  
 }  
-'''  
+  
 ## Example paths for testing <br>
 **Get all heroes:** https://kchalasiewicz-hero-6kfo7.5sc6y6-3.usa-e2.cloudhub.io/api/heroes <br>
 **Get all heroes with name:** https://kchalasiewicz-hero-6kfo7.5sc6y6-3.usa-e2.cloudhub.io/api/heroes?name=Batman <br>
