@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
-    <apikit:config name="kchalasiewicz-heroes-config" api="resource::64640d64-885e-48ac-8ae9-e3a721873edc:kchalasiewicz-heroes:1.0.5:raml:zip:kchalasiewicz-heroes.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <flow name="kchalasiewicz-heroes-main">
+    <apikit:config name="kchalasiewicz-heroes-config" api="resource::64640d64-885e-48ac-8ae9-e3a721873edc:kchalasiewicz-heroes:1.0.6:raml:zip:kchalasiewicz-heroes.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="kchalasiewicz-heroes-main" doc:id="88f9fdca-b2b4-4524-a6ed-cdf9575562d5">
         <http:listener path="/api/*" config-ref="kchalasiewicz-heroes-httpListenerConfig">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
@@ -120,8 +120,8 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-	<flow name="put:\heroes\(id):application\json:kchalasiewicz-heroes-config">
-        <flow-ref doc:name="UpdateHero" doc:id="228035db-8048-4ae6-8a52-9d182aef573e" name="UpdateHeroSubflow"/>
+    <flow name="put:\heroes\(id):application\json:kchalasiewicz-heroes-config" doc:id="876e98ec-3993-440c-b172-c938d4c43666">
+        <flow-ref doc:name="UpdateHero" doc:id="228035db-8048-4ae6-8a52-9d182aef573e" name="UpdateHeroSubflow" />
         <ee:transform doc:name="Prepare response">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
@@ -129,44 +129,44 @@ output application/json
 ---
 {
   message: "Hero was updated!"
-} ]]></ee:set-payload>
+}]]></ee:set-payload>
             </ee:message>
         </ee:transform>
-		<error-handler >
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f3d8fe2b-85a5-4330-92e3-be4d51b0f2d7" type="APP:MISSING_HERO">
-				<ee:transform doc:name="Prepare error message" doc:id="1dae6f09-0918-4215-bfbf-c0a9259cb181" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+        <error-handler>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f3d8fe2b-85a5-4330-92e3-be4d51b0f2d7" type="APP:MISSING_HERO">
+                <ee:transform doc:name="Prepare error message" doc:id="1dae6f09-0918-4215-bfbf-c0a9259cb181">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	message: "Can't find a Hero with this id"
 }]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[404]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="73ac2ccb-bd5a-467d-8030-eeb42829af22" type="APP:WRONG_FORMAT">
-				<ee:transform doc:name="Prepare error message" doc:id="85b062fa-7516-4955-b993-a8e69372009d" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="73ac2ccb-bd5a-467d-8030-eeb42829af22" type="APP:WRONG_FORMAT">
+                <ee:transform doc:name="Prepare error message" doc:id="85b062fa-7516-4955-b993-a8e69372009d">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	message: "Incorrect Hero format"
 }]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-		</error-handler>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
     </flow>
-    <flow name="delete:\heroes\(id):kchalasiewicz-heroes-config">
-        <flow-ref doc:name="DeleteHero" doc:id="bb0d46cf-3bb0-4c69-b3a2-94af95d70df4" name="DeleteHeroSubflow"/>
+    <flow name="delete:\heroes\(id):kchalasiewicz-heroes-config" doc:id="4158c126-c2b3-44c4-8e5d-d6806dbd8337">
+        <flow-ref doc:name="DeleteHero" doc:id="bb0d46cf-3bb0-4c69-b3a2-94af95d70df4" name="DeleteHeroSubflow" />
         <ee:transform doc:name="Prepare response">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
@@ -177,56 +177,27 @@ output application/json
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
-		<error-handler>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="e3a0f408-e3fa-43fe-af97-fe80a964982b" type="APP:MISSING_HERO" >
-				<ee:transform doc:name="Prepare error message" doc:id="b82e7894-5b40-462c-a855-266c028245bf" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+        <error-handler>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="e3a0f408-e3fa-43fe-af97-fe80a964982b" type="APP:MISSING_HERO">
+                <ee:transform doc:name="Prepare error message" doc:id="b82e7894-5b40-462c-a855-266c028245bf">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	message: "Can't find a Hero with this id"
 }]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[404]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-		</error-handler>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
     </flow>
     <flow name="get:\heroes:kchalasiewicz-heroes-config" doc:id="3ebec068-2c69-4737-b8ce-f892dc9e19d1">
-        <flow-ref doc:name="ReadHeroes" doc:id="f2865d6f-7aff-4e59-bdd8-07f244aacf0a" name="ReadHeroesSubflow"/>
-		<ee:transform doc:name="Prepare response" doc:id="5a6e9d74-e0a0-4085-a318-caf0891b0f15" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-payload]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="6fc73db5-90fd-41e3-a4dd-23f8358f5bcc" message="Successfully read the list of heroes"/>
-		<error-handler >
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="c88a036d-392e-42fe-930b-4147bece4f01" type="APP:MISSING_HERO_NAME">
-				<ee:transform doc:name="Prepare error message" doc:id="79a7fd99-71a2-4b22-b5e6-20a6079cf99f" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	message: "Can't find a Hero with this name"
-}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[404]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-		</error-handler>
-    </flow>
-    <flow name="get:\heroes\(id):kchalasiewicz-heroes-config">
-        <flow-ref doc:name="ReadHeroById" doc:id="23940f5c-346b-4997-a8f5-11f487316df1" name="ReadHeroByIdSubflow"/>
-		<ee:transform doc:name="Prepare response">
+        <flow-ref doc:name="ReadHeroes" doc:id="f2865d6f-7aff-4e59-bdd8-07f244aacf0a" name="ReadHeroesSubflow" />
+        <ee:transform doc:name="Prepare response" doc:id="5a6e9d74-e0a0-4085-a318-caf0891b0f15">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -234,28 +205,57 @@ output application/json
 payload]]></ee:set-payload>
             </ee:message>
         </ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="50ad1681-fd93-41c4-ba8a-d24ed01143b0" message="Successfully read hero by id"/>
-		<error-handler>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="14718ada-f89a-4829-84b3-4d74bd56ea03" type="APP:MISSING_HERO" >
-				<ee:transform doc:name="Prepare error message" doc:id="8e43796b-7a4b-4a97-a3f2-a4de47fcafb8" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+        <logger level="INFO" doc:name="Logger" doc:id="6fc73db5-90fd-41e3-a4dd-23f8358f5bcc" message="Successfully read the list of heroes" />
+        <error-handler>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="c88a036d-392e-42fe-930b-4147bece4f01" type="APP:MISSING_HERO_NAME">
+                <ee:transform doc:name="Prepare error message" doc:id="79a7fd99-71a2-4b22-b5e6-20a6079cf99f">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Can't find a Hero with this name"
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\heroes\(id):kchalasiewicz-heroes-config" doc:id="f5b504e6-4bc5-4a0f-b5cf-987f45d3d0c8">
+        <flow-ref doc:name="ReadHeroById" doc:id="23940f5c-346b-4997-a8f5-11f487316df1" name="ReadHeroByIdSubflow" />
+        <ee:transform doc:name="Prepare response">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" doc:name="Logger" doc:id="50ad1681-fd93-41c4-ba8a-d24ed01143b0" message="Successfully read hero by id" />
+        <error-handler>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="14718ada-f89a-4829-84b3-4d74bd56ea03" type="APP:MISSING_HERO">
+                <ee:transform doc:name="Prepare error message" doc:id="8e43796b-7a4b-4a97-a3f2-a4de47fcafb8">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	message: "Can't find a Hero with this id"
 }]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[404]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-		</error-handler>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
     </flow>
-    <flow name="post:\heroes:application\json:kchalasiewicz-heroes-config">
-        <flow-ref doc:name="AddHero" doc:id="262813a3-1812-49d9-93b1-8f4df2a71ea0" name="AddHeroSubflow"/>
-		<ee:transform doc:name="Prepare response">
+    <flow name="post:\heroes:application\json:kchalasiewicz-heroes-config" doc:id="18be636a-9cc4-4e64-b71b-efc1ac376d0f">
+        <flow-ref doc:name="AddHero" doc:id="262813a3-1812-49d9-93b1-8f4df2a71ea0" name="AddHeroSubflow" />
+        <ee:transform doc:name="Prepare response">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -265,22 +265,22 @@ output application/json
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
-		<error-handler>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="52456844-2226-4993-9c59-d5274b317151" type="APP:WRONG_FORMAT" >
-				<ee:transform doc:name="Prepare error message" doc:id="35d8d2da-cf4b-4c6d-ac4b-cf9cbfec2f6a" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+        <error-handler>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="52456844-2226-4993-9c59-d5274b317151" type="APP:WRONG_FORMAT">
+                <ee:transform doc:name="Prepare error message" doc:id="35d8d2da-cf4b-4c6d-ac4b-cf9cbfec2f6a">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	message: "Incorrect Hero format"
 }]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-		</error-handler>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
     </flow>
 </mule>
