@@ -12,6 +12,11 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 					<db:sql><![CDATA[SELECT * FROM heroes WHERE name= :name]]></db:sql>
 					<db:input-parameters ><![CDATA[#[{'name': attributes.queryParams.name}]]]></db:input-parameters>
 				</db:select>
+				<choice doc:name="Choice" doc:id="e42b52ad-a74e-435a-9357-fba96e092ed7" >
+					<when expression="#[sizeOf(payload) == 0]">
+						<raise-error doc:name="Raise error" doc:id="4cdf2f77-48d5-4b23-91dc-f4e572e83981" type="APP:MISSING_HERO_NAME"/>
+					</when>
+				</choice>
 			</when>
 			<otherwise >
 				<db:select doc:name="All heroes" doc:id="7cbc26e3-b6f5-426a-8295-b810f920eea1" config-ref="Database_Config">

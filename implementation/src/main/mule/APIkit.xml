@@ -195,7 +195,7 @@ output application/json
 			</on-error-propagate>
 		</error-handler>
     </flow>
-    <flow name="get:\heroes:kchalasiewicz-heroes-config">
+    <flow name="get:\heroes:kchalasiewicz-heroes-config" doc:id="3ebec068-2c69-4737-b8ce-f892dc9e19d1">
         <flow-ref doc:name="ReadHeroes" doc:id="f2865d6f-7aff-4e59-bdd8-07f244aacf0a" name="ReadHeroesSubflow"/>
 		<ee:transform doc:name="Prepare response" doc:id="5a6e9d74-e0a0-4085-a318-caf0891b0f15" >
 			<ee:message >
@@ -206,6 +206,23 @@ payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="6fc73db5-90fd-41e3-a4dd-23f8358f5bcc" message="Successfully read the list of heroes"/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="c88a036d-392e-42fe-930b-4147bece4f01" type="APP:MISSING_HERO_NAME">
+				<ee:transform doc:name="Prepare error message" doc:id="79a7fd99-71a2-4b22-b5e6-20a6079cf99f" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Can't find a Hero with this name"
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[404]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
     </flow>
     <flow name="get:\heroes\(id):kchalasiewicz-heroes-config">
         <flow-ref doc:name="ReadHeroById" doc:id="23940f5c-346b-4997-a8f5-11f487316df1" name="ReadHeroByIdSubflow"/>
