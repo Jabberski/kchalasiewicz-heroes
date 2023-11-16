@@ -51,7 +51,7 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 		</choice>
 	</sub-flow>
 	<sub-flow name="UpdateHeroSubflow" doc:id="d076f235-9455-44ee-a11b-9f18c34b9897" >
-		<flow-ref doc:name="CheckIfHeroExists" doc:id="31f277c8-41c2-4c7f-bcb4-6308e2d79760" name="CheckIfHeroExistsFlow"/>
+		<flow-ref doc:name="CheckIfHeroExists" doc:id="31f277c8-41c2-4c7f-bcb4-6308e2d79760" name="CheckIfHeroExistsFlow" target="null"/>
 		<flow-ref doc:name="HeroValidation" doc:id="d96f5224-60e3-455e-b591-6a88b1f060b2" name="HeroValidationSubflow" />
 		<db:update doc:name="Hero by id" doc:id="3ad537dc-d0aa-4ca8-9dd5-8886386354b7" config-ref="Database_Config">
 			<db:sql><![CDATA[UPDATE heroes SET name=:name, superpowers=:superpowers WHERE id=:id]]></db:sql>
@@ -64,7 +64,7 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 		<logger level="INFO" doc:name="Logger" doc:id="678d284e-9f83-48dd-8bf0-531b3d1a3530" message="Successfully updated hero in database" />
 	</sub-flow>
 	<sub-flow name="DeleteHeroSubflow" doc:id="9eccb594-f382-4c57-a6dd-9a4aa31dc4ff" >
-		<flow-ref doc:name="CheckIfHeroExists" doc:id="9b3243a5-813c-4409-9aff-0e3705ec5f45" name="CheckIfHeroExistsFlow"/>
+		<flow-ref doc:name="CheckIfHeroExists" doc:id="9b3243a5-813c-4409-9aff-0e3705ec5f45" name="CheckIfHeroExistsFlow" target="null"/>
 		<db:delete doc:name="Hero by id" doc:id="dc46c3e0-aa8a-45e5-83ba-7633681ac69a" config-ref="Database_Config">
 					<db:sql><![CDATA[DELETE FROM heroes WHERE id= :id]]></db:sql>
 					<db:input-parameters><![CDATA[#[{
