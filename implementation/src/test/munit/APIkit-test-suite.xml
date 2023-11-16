@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xsi:schemaLocation="
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
 		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
-		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 	<munit:config name="APIkit-test-suite.xml" />
 	<munit:test name="GetAllHeroesTest" doc:id="87d666d8-f496-43b0-99a9-8b08731303c7" >
 		<munit:behavior >
@@ -25,7 +26,7 @@
 			<flow-ref doc:name="GetHeroes" doc:id="1d071734-84cc-4141-ab0b-47feaa0fc65b" name="get:\heroes:kchalasiewicz-heroes-config"/>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-equals doc:name="Check payload" doc:id="65f76d63-0092-46e9-a010-fd886f636329" actual="#[payload]" expected="#[readUrl('classpath://mocks/All heroes.json')]"/>
+			<munit-tools:assert-equals doc:name="Check response" doc:id="65f76d63-0092-46e9-a010-fd886f636329" actual="#[payload]" expected="#[readUrl('classpath://mocks/All heroes.json')]"/>
 		</munit:validation>
 	</munit:test>
 	<munit:test name="GetHeroWithNameTest" doc:id="201d83d3-129f-472a-96c5-7866edbd0d9e" >
@@ -51,12 +52,12 @@
 			<flow-ref doc:name="GetHeroes" doc:id="3bcadea0-0a58-48dd-bbf1-b136d1337fd4" name="get:\heroes:kchalasiewicz-heroes-config"/>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-equals doc:name="Check payload" doc:id="f7ab2068-772f-4760-a63f-ad5c33f13c33" actual="#[payload]" expected="#[readUrl('classpath://mocks/Hero by name.json')]"/>
+			<munit-tools:assert-equals doc:name="Check response" doc:id="f7ab2068-772f-4760-a63f-ad5c33f13c33" actual="#[payload]" expected="#[readUrl('classpath://mocks/Hero by name.json')]"/>
 		</munit:validation>
 	</munit:test>
 	<munit:test name="GetHeroWithMissingNameTest" doc:id="3e64fb50-0126-42ac-a75e-5f365450134f" expectedErrorType="APP:MISSING_HERO_NAME">
 		<munit:behavior >
-			<munit-tools:mock-when doc:name="Mock when" doc:id="44e12c1d-8013-4bfd-9a0c-47195063a45e" processor="db:select">
+			<munit-tools:mock-when doc:name="Select from DB" doc:id="44e12c1d-8013-4bfd-9a0c-47195063a45e" processor="db:select">
 				<munit-tools:with-attributes >
 					<munit-tools:with-attribute whereValue="Hero with specific name" attributeName="doc:name" />
 					<munit-tools:with-attribute whereValue="6cb69d95-b3ff-4d9f-9cb2-1793c0542f16" attributeName="doc:id" />
@@ -75,6 +76,41 @@
 		</munit:execution>
 		<munit:validation>
 			<munit-tools:assert-equals doc:name="Check error message" doc:id="94eec4cf-00f9-4c78-b29f-19eb5b138bd1" actual="#[payload]" expected="#[{&#10;	message: &quot;Can't find a Hero with this name&quot;&#10;}]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="AddHeroTest" doc:id="2a2fa641-4228-4b34-82d1-90d8e9f77cf0" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Insert into DB" doc:id="5b3649cc-024f-41b2-b942-058073491f72" processor="db:insert">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Add hero" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="5c798f9c-e67b-47e6-a203-132bc961139f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Database_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[[]]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Post body" doc:id="e34f6630-526c-4903-b01e-5e7ad80abffc" >
+				<munit:payload value="#[readUrl('classpath://mocks/New hero.json')]" />
+			</munit:set-event>
+			<flow-ref doc:name="PostHero" doc:id="91a35d72-e234-4178-97f6-140c3a4cb8df" name="post:\heroes:application\json:kchalasiewicz-heroes-config"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-equals doc:name="Check response" doc:id="924aa349-6d8a-4b72-aeea-279d72e56b3f" actual="#[payload]" expected='#[{&#10;  message: "Hero was created!"&#10;}]'/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="AddHeroMissingFieldTest" doc:id="ae7975e6-303a-4e4f-8bca-2f0af3c9de22" expectedErrorType="APIKIT:BAD_REQUEST">
+		<munit:execution >
+			<munit:set-event doc:name="Post body" doc:id="cb02b9bf-07f5-497a-97d3-03d633fb9c79" >
+				<munit:payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;readUrl('classpath://mocks/New hero missing field.json')]" />
+				<munit:attributes value='#[{&#10;	"headers": {&#10;    "content-type": "application/json"},&#10;  "method": "POST",&#10;  "scheme": "http",&#10;  "requestUri": "/api/heroes",&#10;  "version": "HTTP/1.1",&#10;  "listenerPath": "/api/*",&#10;  "localAddress": "",&#10;  "remoteAddress": "",&#10;  "relativePath": "/api/heroes",&#10;  "rawRequestUri": "/api/heroes",&#10;  "rawRequestPath": "/api/heroes",&#10;  "requestPath": "/api/heroes"&#10;} as Object {&#10;		class: "org.mule.extension.http.api.HttpRequestAttributes"&#10;	}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Router" doc:id="b1ec5fac-eb05-4577-9a91-b9a046705e55" name="kchalasiewicz-heroes-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Check error message" doc:id="9b4634d0-aa6d-4cd8-b347-c250dfc45d2a" actual="#[payload]" expected='#[{message: "Incorrect Hero format"}]'/>
 		</munit:validation>
 	</munit:test>
 
